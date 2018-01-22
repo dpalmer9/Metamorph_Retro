@@ -27,18 +27,9 @@ for(a in 1:nrow(mean.lat.data)){
 ## Difficulty Dependent Data ##
 measure.vector1 = c('Overall Accuracy','Accuracy High Risk', 'Accuracy Low Risk', 'High Risk Rate', 'Low Risk Rate')
 measure.vector2 = c('Correct Latency','Incorrect Latency','Metacognitive High Risk Latency', 'Metacognitive Low Risk Latency', 'Correct Latency High Risk', 'Correct Latency Low Risk', 'Incorrect Latency High Risk', 'Incorrect Latency Low Risk')
-measure.vector3 = c('Diff1','Diff2','Diff3','Diff4','Diff5')
-final.part1 = c(measure.vector1,measure.vector2)
 
-final.measure.vector = c()
-curr.position = 1
+final.measure.vector = c(measure.vector1,measure.vector2)
 
-for(a in 1:length(final.part1)){
-  for(b in 1:5){
-    final.measure.vector[curr.position] = paste(final.part1[a],b,sep='.')
-    curr.position = curr.position + 1
-  }
-}
 
 difficulty.data = as.data.frame(matrix(nrow = nrow(raw.data), ncol = length(final.measure.vector)))
 colnames(difficulty.data) = final.measure.vector
@@ -46,7 +37,6 @@ colnames(difficulty.data) = final.measure.vector
 trial.count.start = which(colnames(raw.data) == 'Trial.Analysis...Condition..1.')
 trial.correct.start = which(colnames(raw.data) == 'Trial.Analysis...Correct.Counter...Generic.Counter..1.')
 trial.highrisk.start = which(colnames(raw.data) == 'Trial.Analysis...High.Risk.Counter...Generic.Counter..1.')
-trial.difficulty.start = which(colnames(raw.data) == 'Trial.Analysis...Generic.Evaluation..1.')
 
 for(a in 1:nrow(raw.data)){
   trial.max = length(as.vector(as.matrix(raw.data[a,c(trial.count.start:(trial.correct.start - 1))])))
@@ -67,7 +57,7 @@ for(a in 1:nrow(raw.data)){
   temp.total = c(0,0,0,0,0)
   
   for(b in 0:(trial.max - 1)){
-    curr.difficulty = raw.data[a,(trial.difficulty.start + b)]
+    curr.difficulty = 1
     curr.correct = raw.data[a,(trial.correct.start + b)]
     curr.high = raw.data[a,(trial.highrisk.start + b)]
     if(isTRUE((curr.difficulty == 1) | (curr.difficulty == 2))){
@@ -192,21 +182,20 @@ for(a in 1:nrow(raw.data)){
       }
     }
   }
-  for(b in 0:4){
-    difficulty.data[a,(1 + b)] = ((temp.low.correct[(b + 1)] + temp.high.correct[(b + 1)]) / (temp.total[(b + 1)])) * 100
-    difficulty.data[a,(6 + b)] = ((temp.high.correct[(b + 1)]) / (temp.high[(b + 1)])) * 100
-    difficulty.data[a,(11 + b)] = ((temp.low.correct[(b + 1)]) / ((temp.total[(b + 1)]) - (temp.high[(b + 1)]))) * 100
-    difficulty.data[a,(16 + b)] = (temp.high[(b + 1)]) / (temp.total[(b + 1)])
-    difficulty.data[a,(21 + b)] = ((temp.total[(b + 1)]) - (temp.high[(b + 1)])) / (temp.total[(b + 1)])
-    difficulty.data[a,(26 + b)] = mean(temp.vec.corlat[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(31 + b)] = mean(temp.vec.incorlat[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(36 + b)] = mean(temp.vec.high[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(41 + b)] = mean(temp.vec.low[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(46 + b)] = mean(temp.vec.corlat.high[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(51 + b)] = mean(temp.vec.corlat.low[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(56 + b)] = mean(temp.vec.incorlat.high[[(b + 1)]], na.rm=TRUE)
-    difficulty.data[a,(61 + b)] = mean(temp.vec.incorlat.low[[(b + 1)]], na.rm=TRUE)
-  }
+  
+  difficulty.data[a,(1)] = ((temp.low.correct[1] + temp.high.correct[1]) / (temp.total[1])) * 100
+  difficulty.data[a,(2)] = ((temp.high.correct[1]) / (temp.high[1])) * 100
+  difficulty.data[a,(3)] = ((temp.low.correct[1]) / ((temp.total[1]) - (temp.high[1]))) * 100
+  difficulty.data[a,(4)] = (temp.high[1]) / (temp.total[1])
+  difficulty.data[a,(5)] = ((temp.total[1]) - (temp.high[1])) / (temp.total[1])
+  difficulty.data[a,(6)] = mean(temp.vec.corlat[[1]], na.rm=TRUE)
+  difficulty.data[a,(7)] = mean(temp.vec.incorlat[[1]], na.rm=TRUE)
+  difficulty.data[a,(8)] = mean(temp.vec.high[[1]], na.rm=TRUE)
+  difficulty.data[a,(9)] = mean(temp.vec.low[[1]], na.rm=TRUE)
+  difficulty.data[a,(10)] = mean(temp.vec.corlat.high[[1]], na.rm=TRUE)
+  difficulty.data[a,(11)] = mean(temp.vec.corlat.low[[1]], na.rm=TRUE)
+  difficulty.data[a,(12)] = mean(temp.vec.incorlat.high[[1]], na.rm=TRUE)
+  difficulty.data[a,(13)] = mean(temp.vec.incorlat.low[[1]], na.rm=TRUE)
 }
 
 final.data = cbind(raw.data[ ,1:10], difficulty.data)
